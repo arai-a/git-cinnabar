@@ -17,7 +17,7 @@ $(PACKAGE):
 	@mkdir -p tmp
 	@rm -rf tmp/git-cinnabar
 	git archive --format=tar --prefix=git-cinnabar/ HEAD | tar -C tmp -x
-	@$(TOPDIR)/download.py --no-config -o tmp/git-cinnabar/$(PACKAGE) $(PACKAGE_FLAGS)
+	@$(TOPDIR)/download.py -o tmp/git-cinnabar/$(PACKAGE) $(PACKAGE_FLAGS)
 ifneq (,$(filter %.tar.xz,$(PACKAGE)))
 	tar --owner cinnabar:1000 --group cinnabar:1000 -C tmp --remove-files --sort=name -Jcvf $@ git-cinnabar
 else

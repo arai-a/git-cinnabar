@@ -31,7 +31,7 @@ include git-core/config.mak.uname
 
 .PHONY: FORCE
 
-git-cinnabar-helper$X: FORCE
+git-cinnabar$X: FORCE
 
-helper: git-cinnabar-helper$X
+helper: git-cinnabar$X
 	mv git-core/$^ $^

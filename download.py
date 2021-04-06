@@ -26,7 +26,6 @@ import argparse
 import platform
 import tempfile
 import errno
-from cinnabar.git import Git
 from cinnabar.helper import helper_hash
 from cinnabar.util import (
     HTTPReader,
@@ -44,7 +43,7 @@ except ImportError:
 def download(args):
     '''download a prebuilt helper'''
 
-    helper = 'git-cinnabar-helper'
+    helper = 'git-cinnabar'
     system = args.system
     machine = args.machine
 
@@ -178,10 +177,6 @@ def download(args):
             # Add executable bits wherever read bits are set
             mode = mode | ((mode & 0o0444) >> 2)
             os.chmod(helper_path, mode)
-
-            if not args.no_config:
-                Git.run('config', '--global', 'cinnabar.helper',
-                        os.path.abspath(helper_path))
         else:
             os.unlink(path)
 
@@ -199,7 +194,5 @@ if __name__ == '__main__':
     parser.add_argument('--machine', default=platform.machine(),
                         help=argparse.SUPPRESS)
     parser.add_argument('-o', '--output', help=argparse.SUPPRESS)
-    parser.add_argument('--no-config', action='store_true',
-                        help=argparse.SUPPRESS)
     parser.add_argument('--list', action='store_true', help=argparse.SUPPRESS)
     download(parser.parse_args())
