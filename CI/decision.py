@@ -193,6 +193,7 @@ def decision():
         variant='coverage',
         clone=False,
         command=[
+            'PATH=$PWD/repo:$PATH',
             '(cd repo &&'
             ' nosetests --all-modules --with-coverage --cover-tests tests &&'
             ' nosetests3 --all-modules tests)',

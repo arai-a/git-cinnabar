@@ -923,7 +923,12 @@ fn run_python_command(cmd: PythonCommand) -> c_int {
         PythonCommand::GitRemoteHg => include_str!("../bootstrap/git-remote-hg.py"),
         PythonCommand::GitCinnabar => include_str!("../bootstrap/git-cinnabar.py"),
     });
-    let mut child = Command::new(python.unwrap())
+    let mut python = Command::new(python.unwrap());
+    if std::env::var("GIT_CINNABAR_COVERAGE").is_ok() {
+        python.env_remove("GIT_CINNABAR_COVERAGE");
+        python.args(&["-m", "coverage", "run", "--append"]);
+    }
+    let mut child = python
         .arg("-c")
         .arg(bootstrap)
         .args(std::env::args_os())
@@ -934,7 +939,7 @@ fn run_python_command(cmd: PythonCommand) -> c_int {
 
     let mut child_stdin = child.stdin.as_mut().unwrap();
     writeln!(child_stdin, "{}", env!("PYTHON_TAR_SIZE")).unwrap();
-    zstd::stream::copy_decode(&mut Cursor::new(PYTHON_TAR), &mut child_stdin).unwrap();
+    copy(&mut Cursor::new(PYTHON_TAR), &mut child_stdin).unwrap();
     if cmd == PythonCommand::GitRemoteHg {
         copy(&mut std::io::stdin().lock(), child_stdin).unwrap();
     }

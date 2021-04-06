@@ -23,7 +23,12 @@ def get_module(name_path):
     module = types.ModuleType(name)
     sys.modules[name] = module
     setattr(parent_module, name_path[-1], module)
-    compiled = compile(code, 'git-cinnabar::' + path, 'exec')
+    try:
+        compiled = compile(code, 'git-cinnabar::' + path, 'exec')
+    except:
+        print("%r" % code, file=sys.stderr)
+        print("%r" % path, file=sys.stderr)
+        raise
     exec(compiled, module.__dict__)
     return module
 

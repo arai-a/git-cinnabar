@@ -171,10 +171,9 @@ fn main() {
     feature_slice_strip();
 
     let dir = dir.join("cinnabar");
-    let python_tar = Path::new(&env_os("OUT_DIR")).join("python.tar.zst");
+    let python_tar = Path::new(&env_os("OUT_DIR")).join("python.tar");
     let output = File::create(&python_tar).unwrap();
-    let compress = zstd::stream::Encoder::new(output, 23).unwrap();
-    let mut builder = Builder::new(CountWrite::from(compress));
+    let mut builder = Builder::new(CountWrite::from(output));
     let mut python_files = WalkDir::new(&dir)
         .into_iter()
         .filter_map(|e| {
@@ -200,7 +199,6 @@ fn main() {
     }
     let counter = builder.into_inner().unwrap();
     let size = counter.count();
-    counter.into_inner().finish().unwrap();
     println!("cargo:rustc-env=PYTHON_TAR={}", python_tar.display());
     println!("cargo:rustc-env=PYTHON_TAR_SIZE={}", size);
 }
